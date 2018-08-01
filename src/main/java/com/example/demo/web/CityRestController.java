@@ -3,21 +3,16 @@ package com.example.demo.web;
 import com.example.demo.dao.CityDao;
 import com.example.demo.model.City;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
-import static com.example.demo.util.ValidationUtil.checkIdConsistent;
-import static com.example.demo.util.ValidationUtil.checkNew;
-import static com.example.demo.util.ValidationUtil.checkNotFoundWithId;
+import static com.example.demo.util.ValidationUtil.*;
 
 @RestController
-@RequestMapping(CityRestController.REST_URL)
+@RequestMapping("/rest/cities")
 public class CityRestController {
-    static final String REST_URL = "/rest/cities";
 
     private final CityDao dao;
 
@@ -26,32 +21,26 @@ public class CityRestController {
         this.dao = dao;
     }
 
-    @GetMapping
-    public List<City> getAllUsers(){
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<City> getAll() {
         return dao.getAll();
     }
 
-    @PostMapping
-    public ResponseEntity<City> create(@RequestBody City city) {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public City create(@RequestBody City city) {
         checkNew(city);
-        City created = dao.save(city);
-
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return dao.save(city);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public City get(@PathVariable("id") int id) {
         return checkNotFoundWithId(dao.get(id), id);
     }
 
-    @PostMapping("/{id}")
-    public void update(@RequestBody City city, @PathVariable("id") int id) {
+    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public City update(@RequestBody City city, @PathVariable("id") int id) {
         checkIdConsistent(city, id);
-        dao.save(city);
+        return dao.save(city);
     }
 
     @DeleteMapping(value = "/{id}")
