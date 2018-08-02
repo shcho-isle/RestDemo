@@ -13,5 +13,6 @@ public interface CityDao {
     // null if not found
     City get(int id);
 
+    // ORDERED country, name
     List<City> getAll();
 }

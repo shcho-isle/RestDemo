@@ -1,5 +1,6 @@
-package com.example.demo.dao;
+package com.example.demo.dao.inMemory;
 
+import com.example.demo.dao.CityDao;
 import com.example.demo.model.City;
 import org.springframework.stereotype.Repository;
 
