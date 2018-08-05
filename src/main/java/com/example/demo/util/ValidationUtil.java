@@ -40,4 +40,14 @@ public final class ValidationUtil {
             throw new IllegalArgumentException(bean + " must be with id=" + id);
         }
     }
+
+    public static int validate(Integer data, int defValue, int minValue, int maxValue) {
+        if (data == null)
+            return defValue;
+        if (data < minValue)
+            return minValue;
+        if (data > maxValue)
+            return maxValue;
+        return data;
+    }
 }

@@ -13,5 +13,5 @@ public interface CityDao {
     // null if not found
     City get(int id);
 
-    List<City> getAll();
+    List<City> getAll(String country, int offset, int limit);
 }
