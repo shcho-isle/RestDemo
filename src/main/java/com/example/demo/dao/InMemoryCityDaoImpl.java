@@ -46,7 +46,7 @@ public class InMemoryCityDaoImpl implements CityDao {
     @Override
     public List<City> getAll(String country, int offset, int limit) {
         return repository.values().stream()
-                .filter(city -> city.getCountry().equals(country))
+                .filter(city -> country == null || city.getCountry().equals(country))
                 .sorted(Comparator.comparing(City::getCountry).thenComparing(City::getName))
                 .skip(offset)
                 .limit(limit)
