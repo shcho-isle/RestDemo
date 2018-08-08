@@ -22,8 +22,13 @@ public class CityRestController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<City> getAll() {
-        return dao.getAll();
+    public List<City> getAll(@RequestParam(value = "country", required = false) String country,
+                             @RequestParam(value = "offset", required = false) Integer offset,
+                             @RequestParam(value = "limit", required = false) Integer limit) {
+        offset = validate(offset, 0, 0, 1_000_000);
+        limit = validate(limit, 3, 0, 100);
+
+        return dao.getAll(country, offset, limit);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
