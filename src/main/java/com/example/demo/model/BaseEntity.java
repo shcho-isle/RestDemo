@@ -3,7 +3,6 @@ package com.example.demo.model;
 import com.example.demo.HasId;
 
 public class BaseEntity implements HasId {
-    public static final int START_SEQ = 100000;
 
     private Integer id;
 

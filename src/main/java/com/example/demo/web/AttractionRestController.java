@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 import static com.example.demo.util.ValidationUtil.*;
@@ -21,7 +20,7 @@ public class AttractionRestController {
         this.dao = dao;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public List<Attraction> getAll(@PathVariable("cityId") int cityId,
                                    @RequestParam(value = "fromRating", required = false) Double fromRating,
                                    @RequestParam(value = "toRating", required = false) Double toRating,
@@ -37,20 +36,20 @@ public class AttractionRestController {
                 limit);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Attraction create(@PathVariable("cityId") int cityId,
                              @RequestBody Attraction attraction) {
         checkNew(attraction);
         return dao.save(attraction, cityId);
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/{id}")
     public Attraction get(@PathVariable("cityId") int cityId,
                           @PathVariable("id") int id) {
         return checkNotFoundWithId(dao.get(id, cityId), id);
     }
 
-    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Attraction update(@RequestBody Attraction attraction,
                              @PathVariable("cityId") int cityId,
                              @PathVariable("id") int id) {

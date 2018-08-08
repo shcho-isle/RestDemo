@@ -53,4 +53,9 @@ public class InMemoryCityDaoImpl implements CityDao {
                 .limit(limit)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Integer getCount() {
+        return repository.size();
+    }
 }

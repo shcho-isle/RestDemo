@@ -14,4 +14,6 @@ public interface CityDao {
     City get(int id);
 
     List<City> getAll(String country, int offset, int limit);
+
+    Integer getCount();
 }
