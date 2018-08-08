@@ -4,13 +4,13 @@ import com.example.demo.dao.AttractionDao;
 import com.example.demo.model.Attraction;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Repository
 public class InMemoryAttractionDaoImpl implements AttractionDao {
@@ -43,23 +43,18 @@ public class InMemoryAttractionDaoImpl implements AttractionDao {
     }
 
     @Override
-    public Collection<Attraction> getAll(int cityId, int offset, int limit) {
-        return getAllAsStream(cityId)
+    public List<Attraction> getAll(int cityId, Double fromRating, Double toRating, int offset, int limit) {
+        Map<Integer, Attraction> attractions = repository.get(cityId);
+
+        if (attractions == null) {
+            attractions = Collections.emptyMap();
+        }
+
+        return attractions.values().stream()
+                .filter(a -> a.getRating() >= fromRating && a.getRating() <= toRating)
+                .sorted(Comparator.comparing(Attraction::getRating).reversed())
                 .skip(offset)
                 .limit(limit)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public Collection<Attraction> getBetween(Double fromRating, Double toRating, int cityId) {
-        return getAllAsStream(cityId)
-                .filter(a -> a.getRating() >= fromRating && a.getRating() <= toRating)
-                .collect(Collectors.toList());
-    }
-
-    private Stream<Attraction> getAllAsStream(int cityId) {
-        Map<Integer, Attraction> attractions = repository.get(cityId);
-        return attractions == null ?
-                Stream.empty() : attractions.values().stream().sorted(Comparator.comparing(Attraction::getRating).reversed());
     }
 }

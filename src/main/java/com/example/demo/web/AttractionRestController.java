@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 import static com.example.demo.util.ValidationUtil.*;
 
@@ -21,13 +22,19 @@ public class AttractionRestController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Attraction> getAll(@PathVariable("cityId") int cityId,
-                                         @RequestParam(value = "offset", required = false) Integer offset,
-                                         @RequestParam(value = "limit", required = false) Integer limit) {
+    public List<Attraction> getAll(@PathVariable("cityId") int cityId,
+                                   @RequestParam(value = "fromRating", required = false) Double fromRating,
+                                   @RequestParam(value = "toRating", required = false) Double toRating,
+                                   @RequestParam(value = "offset", required = false) Integer offset,
+                                   @RequestParam(value = "limit", required = false) Integer limit) {
         offset = validate(offset, 0, 0, 1_000_000);
         limit = validate(limit, 3, 0, 100);
 
-        return dao.getAll(cityId, offset, limit);
+        return dao.getAll(cityId,
+                fromRating != null ? fromRating : Double.MIN_VALUE,
+                toRating != null ? toRating : Double.MAX_VALUE,
+                offset,
+                limit);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
