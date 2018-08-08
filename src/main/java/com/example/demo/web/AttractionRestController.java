@@ -1,10 +1,59 @@
 package com.example.demo.web;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.dao.AttractionDao;
+import com.example.demo.model.Attraction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+
+import static com.example.demo.util.ValidationUtil.*;
 
 @RestController
-@RequestMapping(AttractionRestController.REST_URL)
+@RequestMapping("/rest/cities/{cityId}/attractions")
 public class AttractionRestController {
-    static final String REST_URL = "/rest/attractions";
+    private final AttractionDao dao;
+
+    @Autowired
+    public AttractionRestController(AttractionDao dao) {
+        this.dao = dao;
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<Attraction> getAll(@PathVariable("cityId") int cityId,
+                                         @RequestParam(value = "offset", required = false) Integer offset,
+                                         @RequestParam(value = "limit", required = false) Integer limit) {
+        offset = validate(offset, 0, 0, 1_000_000);
+        limit = validate(limit, 3, 0, 100);
+
+        return dao.getAll(cityId, offset, limit);
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Attraction create(@PathVariable("cityId") int cityId,
+                             @RequestBody Attraction attraction) {
+        checkNew(attraction);
+        return dao.save(attraction, cityId);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Attraction get(@PathVariable("cityId") int cityId,
+                          @PathVariable("id") int id) {
+        return checkNotFoundWithId(dao.get(id, cityId), id);
+    }
+
+    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Attraction update(@RequestBody Attraction attraction,
+                             @PathVariable("cityId") int cityId,
+                             @PathVariable("id") int id) {
+        checkIdConsistent(attraction, id);
+        return dao.save(attraction, cityId);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public void delete(@PathVariable("cityId") int cityId,
+                       @PathVariable("id") int id) {
+        checkNotFoundWithId(dao.delete(id, cityId), id);
+    }
 }

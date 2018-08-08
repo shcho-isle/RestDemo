@@ -2,6 +2,7 @@ package com.example.demo.dao.inMemory;
 
 import com.example.demo.dao.AttractionDao;
 import com.example.demo.model.Attraction;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -11,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Repository
 public class InMemoryAttractionDaoImpl implements AttractionDao {
 
     private final Map<Integer, Map<Integer, Attraction>> repository = new ConcurrentHashMap<>();
@@ -41,8 +43,11 @@ public class InMemoryAttractionDaoImpl implements AttractionDao {
     }
 
     @Override
-    public Collection<Attraction> getAll(int cityId) {
-        return getAllAsStream(cityId).collect(Collectors.toList());
+    public Collection<Attraction> getAll(int cityId, int offset, int limit) {
+        return getAllAsStream(cityId)
+                .skip(offset)
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
     @Override

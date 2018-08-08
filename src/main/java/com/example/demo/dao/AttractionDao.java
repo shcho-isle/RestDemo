@@ -15,7 +15,7 @@ public interface AttractionDao {
     Attraction get(int id, int cityId);
 
     // ORDERED rating
-    Collection<Attraction> getAll(int cityId);
+    Collection<Attraction> getAll(int cityId, int offset, int limit);
 
     // ORDERED dateTime
     Collection<Attraction> getBetween(Double fromRating, Double toRating, int cityId);
